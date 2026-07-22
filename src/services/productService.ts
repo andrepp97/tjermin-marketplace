@@ -1,40 +1,36 @@
 import { Product } from '@/types/product';
 
-// Memastikan BASE_URL tidak diakhiri tanda '/' untuk menghindari double slash (//)
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://fakestoreapi.com').replace(/\/$/, '');
+const RAW_API_URL = 'https://fakestoreapi.com';
 
-// Standard header untuk menghindari pemblokiran oleh server API
-const DEFAULT_HEADERS: HeadersInit = {
-  'Content-Type': 'application/json',
-  'User-Agent':
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+// CORS Proxy untuk bypass pemblokiran IP Vercel oleh Cloudflare FakeStoreAPI
+const getProxiedUrl = (endpoint: string): string => {
+  const targetUrl = `${RAW_API_URL}${endpoint}`;
+  return `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 };
 
 export const productService = {
   getProducts: async (): Promise<Product[]> => {
-    const res = await fetch(`${API_BASE_URL}/products`, {
+    const res = await fetch(getProxiedUrl('/products'), {
       cache: 'no-store',
-      headers: DEFAULT_HEADERS,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
-    // 🔴 LEMPAR ERROR jika fetch gagal, agar error.tsx langsung menampilkan pesan spesifik di Vercel
     if (!res.ok) {
       throw new Error(`[ProductService] Failed to fetch products: ${res.status} ${res.statusText}`);
     }
 
     const data = await res.json();
-
-    if (!Array.isArray(data)) {
-      throw new Error(`[ProductService] Expected array from API but got: ${typeof data}`);
-    }
-
     return data;
   },
 
   getProductById: async (id: string): Promise<Product | null> => {
-    const res = await fetch(`${API_BASE_URL}/products/${id}`, {
+    const res = await fetch(getProxiedUrl(`/products/${id}`), {
       cache: 'no-store',
-      headers: DEFAULT_HEADERS,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
     if (res.status === 404) return null;
@@ -47,11 +43,12 @@ export const productService = {
   },
 
   getRelatedProducts: async (category: string, currentId: string): Promise<Product[]> => {
-    // 🟡 WAJIB encodeURIComponent agar karakter seperti spasi / petik pada kategori tidak merusak URL
     const encodedCategory = encodeURIComponent(category.toLowerCase());
-    const res = await fetch(`${API_BASE_URL}/products/category/${encodedCategory}`, {
+    const res = await fetch(getProxiedUrl(`/products/category/${encodedCategory}`), {
       cache: 'no-store',
-      headers: DEFAULT_HEADERS,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!res.ok) {
@@ -59,7 +56,7 @@ export const productService = {
       return [];
     }
 
-    const products = await res.json();
+    const products: Product[] = await res.json();
     if (!Array.isArray(products)) return [];
 
     return products
