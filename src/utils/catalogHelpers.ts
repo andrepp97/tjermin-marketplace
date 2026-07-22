@@ -6,7 +6,8 @@ export interface CatalogFilterOptions {
   sortBy?: string;
 }
 
-const normalizeString = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+const normalizeString = (str: string) =>
+  str.toLowerCase().replace(/[^a-z0-9]/g, '');
 
 export function filterAndSortProducts(
   products: Product[],
@@ -22,33 +23,23 @@ export function filterAndSortProducts(
 
   const filtered = products.filter((product) => {
     if (category && category !== 'all') {
-      const productCatNormalized = normalizeString(product.category || '');
-      const targetCatNormalized = normalizeString(category);
+      const productCat = normalizeString(product.category || '');
+      const targetCat = normalizeString(category);
 
-      if (productCatNormalized !== targetCatNormalized) {
+      if (productCat !== targetCat) {
         return false;
       }
     }
+
     if (priceRange && priceRange !== 'all') {
       const price = Number(product.price);
+
       if (isNaN(price)) return false;
 
-      switch (priceRange) {
-        case '0-50':
-        case 'under-50':
-          if (!(price >= 0 && price <= 50)) return false;
-          break;
-        case '50-100':
-          if (!(price > 50 && price <= 100)) return false;
-          break;
-        case '100-250':
-          if (!(price > 100 && price <= 250)) return false;
-          break;
-        case '250-plus':
-        case 'above-250':
-          if (!(price > 250)) return false;
-          break;
-      }
+      if (priceRange === '0-50' && !(price >= 0 && price <= 50)) return false;
+      if (priceRange === '50-100' && !(price > 50 && price <= 100)) return false;
+      if (priceRange === '100-250' && !(price > 100 && price <= 250)) return false;
+      if (priceRange === '250-plus' && !(price > 250)) return false;
     }
 
     return true;
@@ -61,11 +52,11 @@ export function filterAndSortProducts(
     if (sortBy === 'price-low') return priceA - priceB;
     if (sortBy === 'price-high') return priceB - priceA;
     if (sortBy === 'rating') {
-      const ratingA = a.rating?.rate || 0;
-      const ratingB = b.rating?.rate || 0;
+      const ratingA = typeof a.rating === 'object' && a.rating !== null ? a.rating.rate : 0;
+      const ratingB = typeof b.rating === 'object' && b.rating !== null ? b.rating.rate : 0;
       return ratingB - ratingA;
     }
 
-    return 0; // Default
+    return 0;
   });
 }

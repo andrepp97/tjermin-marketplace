@@ -23,11 +23,18 @@ export const dynamic = 'force-dynamic';
 
 export default async function CatalogPage({ searchParams }: PageProps) {
   const {
-    category = 'all',
+    category: rawCategory = 'all',
     priceRange = 'all',
     sortBy = 'default',
     view = 'grid'
   } = await searchParams;
+
+  let category = rawCategory;
+  try {
+    category = decodeURIComponent(rawCategory.replace(/\+/g, ' '));
+  } catch {
+    category = rawCategory;
+  }
 
   const products = await productService.getProducts();
   const filteredProducts = filterAndSortProducts(products, {
@@ -49,7 +56,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900 pb-16">
       <HeroSection />
 
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 px-4 xl:px-0">
@@ -60,7 +67,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
           />
         </aside>
 
-        <main className="flex-1 pb-16">
+        <main className="flex-1">
           <MobileCatalogControls
             category={category}
             priceRange={priceRange}
