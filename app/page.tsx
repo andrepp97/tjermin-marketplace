@@ -19,6 +19,8 @@ interface PageProps {
   }>;
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function CatalogPage({ searchParams }: PageProps) {
   const {
     category = 'all',
@@ -39,6 +41,12 @@ export default async function CatalogPage({ searchParams }: PageProps) {
     view === 'dense' ? 'grid-cols-2 lg:grid-cols-4' :
       view === 'list' ? 'grid-cols-1' :
         'grid-cols-2 lg:grid-cols-3';
+
+  if (products.length > 0) {
+    console.log('Sample Product Category (API):', JSON.stringify(products[0].category));
+    console.log('Category Param (URL):', JSON.stringify(category));
+    console.log('PriceRange Param (URL):', JSON.stringify(priceRange));
+  }
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
