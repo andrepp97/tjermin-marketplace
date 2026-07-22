@@ -36,6 +36,12 @@ export default async function CatalogPage({ searchParams }: PageProps) {
       view === 'list' ? 'grid-cols-1' :
         'grid-cols-2 lg:grid-cols-3';
 
+  const resolvedParams = await searchParams;
+
+  console.log('1. Params Diterima Server: ', resolvedParams);
+  console.log('2. Total Produk dari API: ', products.length);
+  console.log('3. Total Produk Setelah Filter: ', filteredProducts.length);
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <HeroSection />
