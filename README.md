@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js E-Commerce Product Catalog
 
-## Getting Started
+Proyek ini merupakan implementasi halaman **Catalog dan Product Listing** modern yang dibangun menggunakan **Next.js App Router**, **Server Components**, dan **URL-driven State Management**. Arsitektur ini dirancang untuk memberikan performa maksimal, SEO-optimized, serta *User Experience* yang responsif.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (App Router, React Server Components, ISR)
+- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict typing, Clean Code, Modular architecture)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.react.dev/)
+- **Data Fetching**: Native `fetch` dengan ISR (`revalidate: 3600`)
+- **State Management**: `TanStack Query` + `Redux Toolkit`
+
+---
+
+## 🚀 Instalasi & Memulai Proyek
+
+### Prasyarat
+Pastikan Anda telah menginstal:
+- **Node.js** (v18.x atau versi terbaru)
+- **npm**, **yarn**, atau **pnpm**
+
+### Langkah-Langkah Instalasi
+
+1. **Clone Repositori**
+   ```bash
+   git clone https://github.com/andrepp97/tjermin-marketplace.git
+   cd tjermin-marketplace
+   ```
+
+2. **Instal Dependensi**
+   ```bash
+   npm install
+   # atau
+   yarn install
+   # atau
+   pnpm install
+   ```
+
+3. **Jalankan Mode Pengembang (Development Server)**
+   ```bash
+   npm run dev
+   ```
+   Buka browser dan akses [http://localhost:3000](http://localhost:3000).
+
+4. **Build untuk Produksi**
+   ```bash
+   npm run build
+   npm run start
+   ```
+
+---
+
+## 💡 Cara Mengatasi Hydration Issues & Menerapkan Best Practices
+
+Dalam proses pengembangan proyek ini, beberapa kendala *hydration mismatch* antara *Server-Side Rendered (SSR)* HTML dan *Client-Side React* berhasil diatasi melalui pendekatan berikut:
+
+### 1. Menambahkan Prop `sizes` pada `next/image`
+* **Masalah**: Muncul *warning/error* hydration saat menggunakan komponen `<Image />` dari Next.js karena ketidakcocokan ukuran layout responsif antara *server pre-rendering* dan *client layout engine*.
+* **Solusi**: Menyediakan prop `sizes` pada setiap komponen `Image` (contoh: `sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"`). Hal ini memastikan browser dan Next.js dapat menghitung *responsive srcSet* dengan tepat sebelum komponen di-hydrate.
+
+### 2. Transisi dari Client-Side State ke URL Search Parameters
+* **Masalah**: Penggunaan `useState` dan `useEffect` untuk menangani filter (kategori, rentang harga, pengurutan) di Client Component sering memicu pergeseran tampilan (*layout shift*) dan masalah hydration mismatch saat URL di-refresh atau di-bookmark.
+* **Solusi**: Memindahkan seluruh *state* filter, sort, dan grid view ke URL Query String (`?category=...&sortBy=...&priceRange=...`).
+  - Halaman utama `app/page.tsx` diubah menjadi murni **Server Component** yang membaca `searchParams` secara langsung.
+
+### 3. Arsitektur Komponen Hybrid (Fallback Callback)
+* **Masalah**: Komponen UI seperti `FilterSidebar` dan `MobileCatalogControls` sebelumnya bergantung pada prop handler yang wajib dioper dari parent, memicu bentrokan antara Server Component dan Client Component.
+* **Solusi**: Membuat prop handler/callback menjadi opsional (`?`) dan diintegrasi dengan custom hook `useUpdateQuery`.
+  - Jika komponen dipanggil dari Server Component tanpa callback, komponen secara otomatis memperbarui URL menggunakan `useUpdateQuery`.
+  - Mengisolasi *local UI state* (seperti status buka/tutup modal filter mobile) menggunakan `useState` di dalam Client Component masing-masing tanpa mengganggu state global data catalog.
+
+---
+
+## 📁 Struktur Direktori Utama
+
+```text
+.
+├── app/
+│   ├── layout.tsx             # Root layout
+│   └── page.tsx               # Server Component utama (baca searchParams & fetch data)
+├── components/
+│   ├── catalog/
+│   │   ├── CatalogGrid.tsx    # Grid daftar produk
+│   │   ├── CatalogHeader.tsx  # Header desktop & desktop view switcher
+│   │   ├── DesktopGridSwitcher.tsx
+│   │   └── MobileCatalogControls.tsx # Controls & modal filter khusus mobile
+│   ├── FilterSidebar.tsx      # Sidebar filter desktop
+│   └── HeroSection.tsx
+├── hooks/
+│   └── useUpdateQuery.ts      # Custom hook untuk mutasi URL SearchParams
+├── services/
+│   └── productService.ts      # Data fetching service (ISR enabled)
+└── utils/
+    ├── catalogHelpers.ts      # Helper fungsi filter & sorting
+    └── formatters.ts          # Utility penformatan string/harga
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
