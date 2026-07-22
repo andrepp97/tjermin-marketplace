@@ -1,10 +1,10 @@
 import { Product } from '@/types/product';
 
-const BASE_URL = 'https://fakestoreapi.com';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fakestoreapi.com';
 
 export const productService = {
   getProducts: async (): Promise<Product[]> => {
-    const res = await fetch(`${BASE_URL}/products`, {
+    const res = await fetch(`${API_BASE_URL}/products`, {
       next: { revalidate: 3600 },
     });
 
@@ -13,7 +13,7 @@ export const productService = {
   },
 
   getProductById: async (id: string): Promise<Product | null> => {
-    const res = await fetch(`${BASE_URL}/products/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/products/${id}`, {
       next: { revalidate: 3600 },
     });
 
@@ -22,7 +22,7 @@ export const productService = {
   },
 
   getRelatedProducts: async (category: string, currentId: string): Promise<Product[]> => {
-    const res = await fetch(`${BASE_URL}/products/category/${category}`, {
+    const res = await fetch(`${API_BASE_URL}/products/category/${category}`, {
       next: { revalidate: 3600 },
     });
 
