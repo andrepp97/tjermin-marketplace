@@ -73,7 +73,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-slate-800">
+    <div className="max-w-7xl mx-auto px-4 xl:px-0 py-6 text-slate-800">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
         <Link href="/" className="hover:text-slate-900 transition-colors">
@@ -155,11 +155,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {relatedProducts.map((item, index) => (
+          {relatedProducts.map((item) => (
             <ProductCard
               key={item.id}
               product={item}
-              priority={index < 2}
             />
           ))}
         </div>

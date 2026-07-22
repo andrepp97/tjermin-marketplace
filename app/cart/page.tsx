@@ -42,13 +42,12 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 py-10 px-4 sm:px-8">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-2">
           <ShoppingBag className="w-6 h-6 text-slate-800" /> Shopping Cart
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Item List */}
           <div className="lg:col-span-2 space-y-4">
             {cartItems.map((item) => (
               <motion.div
@@ -61,10 +60,11 @@ export default function CartPage() {
               >
                 <div className="relative w-20 h-20 bg-slate-50 border border-slate-100 rounded-xl shrink-0 p-2">
                   <Image
+                    fill
                     src={item.image}
                     alt={item.title}
-                    fill
                     className="object-contain p-1"
+                    sizes="80px"
                   />
                 </div>
 

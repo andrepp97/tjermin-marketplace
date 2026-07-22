@@ -1,116 +1,194 @@
 'use client';
 
-import React from 'react';
-import { SlidersHorizontal, ChevronDown, Grid3X3, Grid2X2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FilterSidebar } from '@/components/FilterSidebar';
+import { useState } from 'react';
+import { Filter, SlidersHorizontal, Grid, Square } from 'lucide-react';
+import { useUpdateQuery } from '@/hooks/useUpdateQuery';
 
 interface MobileCatalogControlsProps {
   category: string;
   priceRange: string;
   sortBy: string;
   formattedCategoryName: string;
-  isFilterOpen: boolean;
-  mobileGridCols: 'compact' | 'standard';
-  onToggleFilter: () => void;
-  onSelectCategory: (cat: string) => void;
-  onSelectPriceRange: (range: string) => void;
-  onSortChange: (sort: string) => void;
-  onGridColsChange: (cols: 'compact' | 'standard') => void;
+  isFilterOpen?: boolean;
+  mobileGridCols?: 'compact' | 'standard';
+  onToggleFilter?: () => void;
+  onSelectCategory?: (category: string) => void;
+  onSelectPriceRange?: (range: string) => void;
+  onSortChange?: (sort: string) => void;
+  onGridColsChange?: (cols: 'compact' | 'standard') => void;
 }
 
-export const MobileCatalogControls: React.FC<MobileCatalogControlsProps> = ({
+const CATEGORIES = [
+  { label: 'All Categories', value: 'all' },
+  { label: "Men's Clothing", value: "men's clothing" },
+  { label: "Women's Clothing", value: "women's clothing" },
+  { label: 'Jewelery', value: 'jewelery' },
+  { label: 'Electronics', value: 'electronics' },
+];
+
+const PRICE_RANGES = [
+  { label: 'All Prices', value: 'all' },
+  { label: '$0 - $50', value: '0-50' },
+  { label: '$50 - $100', value: '50-100' },
+  { label: '$100 - $250', value: '100-250' },
+  { label: '$250+', value: '250-plus' },
+];
+
+export function MobileCatalogControls({
   category,
   priceRange,
   sortBy,
   formattedCategoryName,
-  isFilterOpen,
-  mobileGridCols,
-  onToggleFilter,
+  mobileGridCols = 'compact',
   onSelectCategory,
   onSelectPriceRange,
   onSortChange,
   onGridColsChange,
-}) => {
+}: MobileCatalogControlsProps) {
+  const [isOpenInternal, setIsOpenInternal] = useState(false);
+  const { updateQuery } = useUpdateQuery();
+
+  const handleCategoryChange = (val: string) => {
+    if (onSelectCategory) onSelectCategory(val);
+    else updateQuery('category', val);
+  };
+
+  const handlePriceRangeChange = (val: string) => {
+    if (onSelectPriceRange) {
+      onSelectPriceRange(val);
+    } else {
+      const nextVal = priceRange === val ? 'all' : val;
+      updateQuery('priceRange', nextVal);
+    }
+  };
+
+  const handleSortChange = (val: string) => {
+    if (onSortChange) onSortChange(val);
+    else updateQuery('sortBy', val);
+  };
+
+  const handleGridToggle = () => {
+    const nextMode = mobileGridCols === 'compact' ? 'standard' : 'compact';
+    if (onGridColsChange) {
+      onGridColsChange(nextMode);
+    } else {
+      updateQuery('mView', nextMode);
+    }
+  };
+
   return (
-    <div className="lg:hidden mb-6 space-y-4">
-      {/* Expandable Filter Button */}
-      <button
-        onClick={onToggleFilter}
-        className="w-full py-3.5 px-4 border-2 border-[#1E293B] rounded-2xl flex items-center justify-center gap-2.5 text-[#1E293B] font-semibold text-base hover:bg-slate-50 active:scale-[0.99] transition-all"
-      >
-        <SlidersHorizontal className="w-5 h-5 stroke-[2.2]" />
-        <span>Filters & Sort</span>
-      </button>
-
-      {/* Expandable Mobile Drawer */}
-      <AnimatePresence>
-        {isFilterOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="overflow-hidden bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm"
-          >
-            <FilterSidebar
-              selectedCategory={category}
-              onSelectCategory={onSelectCategory}
-              selectedPriceRange={priceRange}
-              onSelectPriceRange={onSelectPriceRange}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Title */}
-      <div className="pt-2">
-        <h1 className="text-2xl font-bold text-[#0F172A] tracking-tight">
-          {formattedCategoryName}
-        </h1>
-      </div>
-
-      {/* Sub-Header Row */}
-      <div className="flex items-center justify-between pt-1">
-        <div className="relative flex items-center gap-1.5 cursor-pointer group">
-          <span className="text-sm font-semibold text-[#0F172A]">Sort by</span>
-          <ChevronDown className="w-4 h-4 text-[#0F172A] stroke-[2.5]" />
-          <select
-            value={sortBy}
-            onChange={(e) => onSortChange(e.target.value)}
-            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-          >
-            <option value="default">Featured</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="rating">Highest Rating</option>
-          </select>
+    <div className="block lg:hidden mb-6">
+      <div className="flex items-center justify-between gap-2 pb-4 border-b border-slate-100">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">{formattedCategoryName}</h1>
         </div>
 
-        {/* Mobile View Switcher */}
-        <div className="flex items-center bg-slate-100/70 border border-slate-200/80 rounded-xl p-1 gap-0.5">
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => onGridColsChange('compact')}
-            className={`p-1.5 rounded-lg transition-all ${mobileGridCols === 'compact'
-              ? 'bg-white shadow-sm text-[#0F172A]'
-              : 'text-slate-400 hover:text-slate-600'
-              }`}
-            title="2 Column View"
+            onClick={handleGridToggle}
+            className="p-2 border border-slate-200 rounded-xl text-slate-700 bg-white"
+            aria-label="Toggle Grid View"
           >
-            <Grid3X3 className="w-4 h-4 stroke-2" />
+            {mobileGridCols === 'compact' ? (
+              <Grid className="w-5 h-5" />
+            ) : (
+              <Square className="w-5 h-5" />
+            )}
           </button>
+
           <button
-            onClick={() => onGridColsChange('standard')}
-            className={`p-1.5 rounded-lg transition-all ${mobileGridCols === 'standard'
-              ? 'bg-white shadow-sm text-[#0F172A]'
-              : 'text-slate-400 hover:text-slate-600'
-              }`}
-            title="Single Column View"
+            onClick={() => setIsOpenInternal(true)}
+            className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 text-white rounded-xl text-sm font-semibold"
           >
-            <Grid2X2 className="w-4 h-4 stroke-2" />
+            <Filter className="w-4 h-4" />
+            <span>Filter</span>
           </button>
         </div>
       </div>
+
+      {isOpenInternal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex justify-end">
+          <div className="w-full max-w-xs bg-white h-full p-6 overflow-y-auto flex flex-col justify-between">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b pb-4">
+                <div className="flex items-center gap-2 text-lg font-bold">
+                  <SlidersHorizontal className="w-5 h-5" />
+                  <span>Filter & Sort</span>
+                </div>
+                <button
+                  onClick={() => setIsOpenInternal(false)}
+                  className="text-slate-400 hover:text-slate-700 text-sm font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                  Sort By
+                </h3>
+                <select
+                  value={sortBy}
+                  onChange={(e) => handleSortChange(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 text-sm rounded-xl p-3 text-slate-800 focus:outline-none"
+                >
+                  <option value="default">Featured</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Highest Rating</option>
+                </select>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                  Category
+                </h3>
+                <div className="space-y-2">
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.value}
+                      onClick={() => handleCategoryChange(cat.value)}
+                      className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${category === cat.value
+                        ? 'bg-slate-900 text-white font-medium'
+                        : 'text-slate-600 hover:bg-slate-100'
+                        }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                  Price Range
+                </h3>
+                <div className="space-y-2">
+                  {PRICE_RANGES.map((range) => (
+                    <button
+                      key={range.value}
+                      onClick={() => handlePriceRangeChange(range.value)}
+                      className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${priceRange === range.value
+                        ? 'bg-slate-900 text-white font-medium'
+                        : 'text-slate-600 hover:bg-slate-100'
+                        }`}
+                    >
+                      {range.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsOpenInternal(false)}
+              className="w-full py-3 bg-slate-900 text-white text-sm font-bold rounded-xl mt-6"
+            >
+              Apply Filters
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}
