@@ -39,7 +39,6 @@ export const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
 
   return (
     <div className="space-y-4">
-      {/* 1. Quantity Counter */}
       <div>
         <label className="block text-xs font-semibold text-slate-600 mb-2">
           Quantity
@@ -70,7 +69,6 @@ export const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
         </div>
       </div>
 
-      {/* 2. Action Buttons (Add to Cart & Wishlist) */}
       <div className="flex items-center gap-3">
         <button
           type="button"

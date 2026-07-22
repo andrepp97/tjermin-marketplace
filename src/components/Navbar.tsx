@@ -9,9 +9,9 @@ import { usePathname } from 'next/navigation';
 
 const navLinks = [
   { label: 'Home', href: '/' },
-  { label: 'Inventory', href: '/products' },
-  { label: 'Financing', href: '/financing' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Inventory', href: '#' },
+  { label: 'Financing', href: '#' },
+  { label: 'Contact', href: '#' },
 ];
 
 export const Navbar = () => {
@@ -34,7 +34,7 @@ export const Navbar = () => {
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
-                  <li key={link.href} role="none">
+                  <li key={link.label} role="none">
                     <Link
                       href={link.href}
                       role="menuitem"

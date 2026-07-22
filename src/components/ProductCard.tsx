@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Star, ChevronRight, ShoppingCart } from 'lucide-react';
+import { Check, Star, ChevronRight, ShoppingCart } from 'lucide-react';
 import { Product } from '@/types/product';
 import { useAppDispatch } from '@/store/hooks';
-import { addToCart } from '@/store/cartSlice';
+import { addToCart, CartItem } from '@/store/cartSlice';
 
 interface ProductCardProps {
   product: Product;
@@ -16,6 +16,7 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) => {
   const dispatch = useAppDispatch();
+  const [isAdded, setIsAdded] = useState<boolean>(false);
 
   const getBadgeStyle = (badge?: string) => {
     switch (badge) {
@@ -28,6 +29,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, priority = fa
       default:
         return 'hidden';
     }
+  };
+
+  const handleAddToCart = () => {
+    const cartItem: CartItem = {
+      ...product,
+      quantity: 1,
+    };
+
+    dispatch(addToCart(cartItem));
+
+    setIsAdded(true);
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
   };
 
   return (
@@ -62,8 +77,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, priority = fa
             <Star
               key={i}
               className={`w-3.5 h-3.5 ${i < Math.round(product.rating?.rate || 5)
-                  ? 'text-amber-400 fill-amber-400'
-                  : 'text-slate-200'
+                ? 'text-amber-400 fill-amber-400'
+                : 'text-slate-200'
                 }`}
             />
           ))}
@@ -94,14 +109,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, priority = fa
           {/* Quick Add to Cart Button */}
           <motion.button
             whileTap={{ scale: 0.85 }}
-            onClick={() => dispatch(addToCart(product))}
-            className="p-2 rounded-lg bg-slate-100 hover:bg-slate-900 hover:text-white transition-colors"
+            onClick={handleAddToCart}
+            disabled={isAdded}
+            className={`p-2 rounded-lg transition-colors ${isAdded
+              ? 'bg-emerald-600 text-white'
+              : 'bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-700'
+              }`}
             title="Add to Cart"
           >
-            <ShoppingCart className="w-4 h-4" />
+            {isAdded ? <Check className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
           </motion.button>
 
-          {/* View Detail Link */}
           <Link
             href={`/products/${product.id}`}
             className="inline-flex items-center text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors gap-0.5"
