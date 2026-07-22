@@ -2,13 +2,12 @@
 
 import React from 'react';
 import { Filter } from 'lucide-react';
-import { useUpdateQuery } from '@/hooks/useUpdateQuery';
 
 interface FilterSidebarProps {
   selectedCategory: string;
   selectedPriceRange: string;
-  onSelectCategory?: (category: string) => void;
-  onSelectPriceRange?: (range: string) => void;
+  onSelectCategory: (category: string) => void;
+  onSelectPriceRange: (range: string) => void;
 }
 
 const CATEGORIES = [
@@ -33,25 +32,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onSelectCategory,
   onSelectPriceRange,
 }) => {
-  const { updateQuery } = useUpdateQuery();
-
-  const handleCategorySelect = (categoryValue: string) => {
-    if (onSelectCategory) {
-      onSelectCategory(categoryValue);
-    } else {
-      updateQuery('category', categoryValue);
-    }
-  };
-
-  const handlePriceRangeSelect = (rangeValue: string) => {
-    if (onSelectPriceRange) {
-      onSelectPriceRange(rangeValue);
-    } else {
-      const nextRange = selectedPriceRange === rangeValue ? 'all' : rangeValue;
-      updateQuery('priceRange', nextRange);
-    }
-  };
-
   return (
     <div className="w-full lg:w-64 space-y-8 pr-4">
       <div className="flex items-center gap-2 text-xl font-bold text-slate-800">
@@ -59,6 +39,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <span>Filters</span>
       </div>
 
+      {/* Category Section */}
       <div>
         <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900 mb-4">
           CATEGORY
@@ -67,10 +48,11 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           {CATEGORIES.map((cat) => (
             <li key={cat.value}>
               <button
-                onClick={() => handleCategorySelect(cat.value)}
-                className={`text-left w-full transition-colors ${selectedCategory === cat.value
-                  ? 'font-bold text-slate-900 underline underline-offset-8 decoration-2'
-                  : 'text-slate-500 hover:text-slate-800'
+                type="button"
+                onClick={() => onSelectCategory(cat.value)}
+                className={`text-left w-full transition-colors cursor-pointer ${selectedCategory === cat.value
+                    ? 'font-bold text-slate-900 underline underline-offset-8 decoration-2'
+                    : 'text-slate-500 hover:text-slate-800'
                   }`}
               >
                 {cat.label}
@@ -80,6 +62,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         </ul>
       </div>
 
+      {/* Price Range Section */}
       <div>
         <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900 mb-4">
           PRICE RANGE
@@ -94,8 +77,8 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               <input
                 type="checkbox"
                 checked={selectedPriceRange === range.value}
-                onChange={() => handlePriceRangeSelect(range.value)}
-                className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                onChange={() => onSelectPriceRange(range.value)}
+                className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
             </label>
           ))}

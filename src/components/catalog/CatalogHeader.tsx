@@ -1,27 +1,31 @@
+'use client';
+
 import { DesktopGridSwitcher, DesktopViewMode } from './DesktopGridSwitcher';
 
 interface CatalogHeaderProps {
   title: string;
-  totalCount: number;
+  productCount: number;
   sortBy: string;
   onSortChange: (value: string) => void;
   desktopView: DesktopViewMode;
-  onViewChange: (mode: DesktopViewMode) => void;
+  onDesktopViewChange: (mode: DesktopViewMode) => void;
 }
 
 export function CatalogHeader({
   title,
-  totalCount,
+  productCount,
   sortBy,
   onSortChange,
   desktopView,
-  onViewChange,
+  onDesktopViewChange,
 }: CatalogHeaderProps) {
   return (
     <div className="hidden lg:flex items-center justify-between pb-4 border-b border-slate-100 mb-8">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
-        <p className="text-xs text-slate-500 mt-0.5">Showing {totalCount} products</p>
+        <p className="text-xs text-slate-500 mt-0.5">
+          Showing {productCount} products
+        </p>
       </div>
 
       <div className="flex items-center gap-4">
@@ -36,7 +40,7 @@ export function CatalogHeader({
           <option value="rating">Highest Rating</option>
         </select>
 
-        <DesktopGridSwitcher viewMode={desktopView} onViewChange={onViewChange} />
+        <DesktopGridSwitcher viewMode={desktopView} onViewChange={onDesktopViewChange} />
       </div>
     </div>
   );

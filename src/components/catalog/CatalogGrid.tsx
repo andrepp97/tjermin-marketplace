@@ -1,3 +1,5 @@
+'use client';
+
 import { Product } from '@/types/product';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductSkeleton } from '@/components/ProductSkeleton';
@@ -33,7 +35,7 @@ export function CatalogGrid({
         </p>
         <button
           onClick={onResetFilters}
-          className="mt-3 text-xs font-bold text-slate-900 underline hover:text-slate-700"
+          className="mt-3 text-xs font-bold text-slate-900 underline hover:text-slate-700 cursor-pointer"
         >
           Reset Filter
         </button>
@@ -42,16 +44,26 @@ export function CatalogGrid({
   }
 
   return (
-    <div className={gridLayoutClass}>
-      {isLoading
-        ? Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
-        : products.map((product, index) => (
+    <>
+      <div className={gridLayoutClass}>
+        {isLoading
+          ? Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
+          : products.map((product, index) => (
             <ProductCard
               key={product.id}
               product={product}
               priority={index < 4}
             />
           ))}
-    </div>
+      </div>
+
+      {!isLoading && products.length > 0 && (
+        <div className="my-12 text-center">
+          <button className="px-8 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold transition-all shadow-sm hover:border-slate-300 cursor-pointer">
+            Show More Products
+          </button>
+        </div>
+      )}
+    </>
   );
 }

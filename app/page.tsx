@@ -1,87 +1,87 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import { useProducts } from '@/hooks/useProducts';
 import { useFilteredProducts } from '@/hooks/useFilteredProducts';
-import { useCatalogState } from '@/hooks/useCatalogState';
+import { useCatalogLayout } from '@/hooks/useCatalogLayout';
 import { formatCategoryName } from '@/utils/formatters';
 
 import { HeroSection } from '@/components/HeroSection';
 import { FilterSidebar } from '@/components/FilterSidebar';
 import { MobileCatalogControls } from '@/components/catalog/MobileCatalogControls';
+import { DesktopViewMode } from '@/components/catalog/DesktopGridSwitcher';
 import { CatalogHeader } from '@/components/catalog/CatalogHeader';
 import { CatalogGrid } from '@/components/catalog/CatalogGrid';
 
 export default function CatalogPage() {
   const { data: products, isLoading, isError } = useProducts();
-  const {
-    filters,
-    setCategory,
-    togglePriceRange,
-    setSortBy,
-    resetFilters,
-    mobileFilter,
-    viewMode,
-  } = useCatalogState();
 
-  const filteredProducts = useFilteredProducts(products, filters);
-  const formattedCategoryName = formatCategoryName(filters.category);
+  // Filter States
+  const [category, setCategory] = useState<string>('all');
+  const [priceRange, setPriceRange] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<string>('default');
+
+  // View Switcher States
+  const [mobileGridCols, setMobileGridCols] = useState<'compact' | 'standard'>('compact');
+  const [desktopView, setDesktopView] = useState<DesktopViewMode>('grid');
+
+  // Custom Hooks & Utils
+  const filteredProducts = useFilteredProducts(products, { category, priceRange, sortBy });
+  const formattedCategoryName = formatCategoryName(category);
+  const gridLayoutClass = useCatalogLayout(mobileGridCols, desktopView);
+
+  // Memoized Handlers
+  const handleTogglePriceRange = useCallback((val: string) => {
+    setPriceRange((prev) => (prev === val ? 'all' : val));
+  }, []);
+
+  const handleResetFilters = useCallback(() => {
+    setCategory('all');
+    setPriceRange('all');
+  }, []);
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 pb-16">
+    <div className="min-h-screen bg-white text-slate-900">
       <HeroSection />
-
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 px-4 xl:px-0">
-        {/* Desktop Filter Sidebar */}
         <aside className="hidden lg:block w-64 shrink-0 sticky top-20 h-fit">
           <FilterSidebar
-            selectedCategory={filters.category}
+            selectedCategory={category}
             onSelectCategory={setCategory}
-            selectedPriceRange={filters.priceRange}
-            onSelectPriceRange={togglePriceRange}
+            selectedPriceRange={priceRange}
+            onSelectPriceRange={handleTogglePriceRange}
           />
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1">
           <MobileCatalogControls
-            category={filters.category}
-            priceRange={filters.priceRange}
-            sortBy={filters.sortBy}
+            category={category}
+            priceRange={priceRange}
+            sortBy={sortBy}
             formattedCategoryName={formattedCategoryName}
-            isFilterOpen={mobileFilter.isOpen}
-            mobileGridCols={viewMode.mobileGridCols}
-            onToggleFilter={mobileFilter.toggle}
+            mobileGridCols={mobileGridCols}
             onSelectCategory={setCategory}
-            onSelectPriceRange={togglePriceRange}
+            onSelectPriceRange={handleTogglePriceRange}
             onSortChange={setSortBy}
-            onGridColsChange={viewMode.setMobileGridCols}
+            onGridColsChange={setMobileGridCols}
           />
 
           <CatalogHeader
             title={formattedCategoryName}
-            totalCount={filteredProducts.length}
-            sortBy={filters.sortBy}
+            productCount={filteredProducts.length}
+            sortBy={sortBy}
             onSortChange={setSortBy}
-            desktopView={viewMode.desktopView}
-            onViewChange={viewMode.setDesktopView}
+            desktopView={desktopView}
+            onDesktopViewChange={setDesktopView}
           />
 
           <CatalogGrid
             products={filteredProducts}
             isLoading={isLoading}
             isError={isError}
-            gridLayoutClass={viewMode.gridLayoutClass}
-            onResetFilters={resetFilters}
+            gridLayoutClass={gridLayoutClass}
+            onResetFilters={handleResetFilters}
           />
-
-          {/* Show More */}
-          {!isLoading && filteredProducts.length > 0 && (
-            <div className="mt-12 text-center">
-              <button className="px-8 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold transition-all shadow-sm hover:border-slate-300">
-                Show More Products
-              </button>
-            </div>
-          )}
         </main>
       </div>
     </div>
