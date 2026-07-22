@@ -2,6 +2,8 @@
 
 Proyek ini merupakan implementasi halaman **Catalog dan Product Listing** modern yang dibangun menggunakan **Next.js App Router**, **Server Components**, dan **URL-driven State Management**. Arsitektur ini dirancang untuk memberikan performa maksimal, SEO-optimized, serta *User Experience* yang responsif.
 
+Live Demo : https://tjermin-shop.vercel.app
+
 ---
 
 ## 🛠️ Tech Stack
