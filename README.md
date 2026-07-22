@@ -59,20 +59,18 @@ Pastikan Anda telah menginstal:
 
 Dalam proses pengembangan proyek ini, beberapa kendala *hydration mismatch* antara *Server-Side Rendered (SSR)* HTML dan *Client-Side React* berhasil diatasi melalui pendekatan berikut:
 
-### 1. Menambahkan Prop `sizes` pada `next/image`
-* **Masalah**: Muncul *warning/error* hydration saat menggunakan komponen `<Image />` dari Next.js karena ketidakcocokan ukuran layout responsif antara *server pre-rendering* dan *client layout engine*.
-* **Solusi**: Menyediakan prop `sizes` pada setiap komponen `Image` (contoh: `sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"`). Hal ini memastikan browser dan Next.js dapat menghitung *responsive srcSet* dengan tepat sebelum komponen di-hydrate.
 
-### 2. Transisi dari Client-Side State ke URL Search Parameters
-* **Masalah**: Penggunaan `useState` dan `useEffect` untuk menangani filter (kategori, rentang harga, pengurutan) di Client Component sering memicu pergeseran tampilan (*layout shift*) dan masalah hydration mismatch saat URL di-refresh atau di-bookmark.
-* **Solusi**: Memindahkan seluruh *state* filter, sort, dan grid view ke URL Query String (`?category=...&sortBy=...&priceRange=...`).
-  - Halaman utama `app/page.tsx` diubah menjadi murni **Server Component** yang membaca `searchParams` secara langsung.
+### 💾 Custom Storage Integration (`customStorage.ts`)
 
-### 3. Arsitektur Komponen Hybrid (Fallback Callback)
-* **Masalah**: Komponen UI seperti `FilterSidebar` dan `MobileCatalogControls` sebelumnya bergantung pada prop handler yang wajib dioper dari parent, memicu bentrokan antara Server Component dan Client Component.
-* **Solusi**: Membuat prop handler/callback menjadi opsional (`?`) dan diintegrasi dengan custom hook `useUpdateQuery`.
-  - Jika komponen dipanggil dari Server Component tanpa callback, komponen secara otomatis memperbarui URL menggunakan `useUpdateQuery`.
-  - Mengisolasi *local UI state* (seperti status buka/tutup modal filter mobile) menggunakan `useState` di dalam Client Component masing-masing tanpa mengganggu state global data catalog.
+#### **Alasan Implementasi**
+Secara bawaan, **Redux Persist** mengandalkan Web Storage browser (`window.localStorage`) untuk menyimpan *state*. Namun, pada arsitektur **Next.js (Server-Side Rendering / SSR)**, kode di-render terlebih dahulu di lingkungan Node.js (server) di mana objek `window` dan `localStorage` belum tersedia (`undefined`).
+
+Implementasi `customStorage.ts` dibuat untuk menyelesaikan masalah tersebut dengan pendekatan berikut:
+
+1. **Mencegah Error SSR & Build**: Menghindari error `ReferenceError: window is not defined` saat Next.js melakukan Server-Side Rendering atau kompilasi build statis.
+2. **Graceful Fallback (Noop Storage)**: Menyediakan *dummy storage* yang aman (*no-operation*) pada server. *Dummy storage* ini mengembalikan `Promise` kosong sehingga Redux Persist tidak mengalami *crash* saat dijalankan di server.
+3. **Seamless Client-Side Hydration**: Begitu aplikasi selesai dimuat di browser (`typeof window !== 'undefined'`), sistem secara otomatis beralih menggunakan `localStorage` asli milik browser untuk menyimpan dan memulihkan *state* aplikasi.
+
 
 ---
 
