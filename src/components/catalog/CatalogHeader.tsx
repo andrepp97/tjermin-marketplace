@@ -1,23 +1,22 @@
-'use client';
-
-import { useUpdateQuery } from '@/hooks/useUpdateQuery';
 import { DesktopGridSwitcher, DesktopViewMode } from './DesktopGridSwitcher';
 
 interface CatalogHeaderProps {
   title: string;
   totalCount: number;
-  currentSort: string;
-  currentView: DesktopViewMode;
+  sortBy: string;
+  onSortChange: (value: string) => void;
+  desktopView: DesktopViewMode;
+  onViewChange: (mode: DesktopViewMode) => void;
 }
 
 export function CatalogHeader({
   title,
   totalCount,
-  currentSort,
-  currentView,
+  sortBy,
+  onSortChange,
+  desktopView,
+  onViewChange,
 }: CatalogHeaderProps) {
-  const { updateQuery } = useUpdateQuery();
-
   return (
     <div className="hidden lg:flex items-center justify-between pb-4 border-b border-slate-100 mb-8">
       <div>
@@ -27,8 +26,8 @@ export function CatalogHeader({
 
       <div className="flex items-center gap-4">
         <select
-          value={currentSort}
-          onChange={(e) => updateQuery('sortBy', e.target.value)}
+          value={sortBy}
+          onChange={(e) => onSortChange(e.target.value)}
           className="bg-white text-slate-700 border border-slate-200 text-sm rounded-xl px-3.5 py-2 focus:outline-none focus:border-slate-400 transition-all cursor-pointer shadow-sm"
         >
           <option value="default">Sort by: Featured</option>
@@ -37,10 +36,7 @@ export function CatalogHeader({
           <option value="rating">Highest Rating</option>
         </select>
 
-        <DesktopGridSwitcher
-          viewMode={currentView}
-          onViewChange={(mode) => updateQuery('view', mode)}
-        />
+        <DesktopGridSwitcher viewMode={desktopView} onViewChange={onViewChange} />
       </div>
     </div>
   );
