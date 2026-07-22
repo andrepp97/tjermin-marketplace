@@ -28,19 +28,17 @@ export default async function CatalogPage({ searchParams }: PageProps) {
   } = await searchParams;
 
   const products = await productService.getProducts();
-  const filteredProducts = filterAndSortProducts(products, { category, priceRange, sortBy });
+  const filteredProducts = filterAndSortProducts(products, {
+    category,
+    priceRange,
+    sortBy,
+  });
   const formattedCategoryName = formatCategoryName(category);
 
   const gridLayoutClass =
     view === 'dense' ? 'grid-cols-2 lg:grid-cols-4' :
       view === 'list' ? 'grid-cols-1' :
         'grid-cols-2 lg:grid-cols-3';
-
-  const resolvedParams = await searchParams;
-
-  console.log('1. Params Diterima Server: ', resolvedParams);
-  console.log('2. Total Produk dari API: ', products.length);
-  console.log('3. Total Produk Setelah Filter: ', filteredProducts.length);
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -54,7 +52,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
           />
         </aside>
 
-        <main className="flex-1">
+        <main className="flex-1 pb-16">
           <MobileCatalogControls
             category={category}
             priceRange={priceRange}
