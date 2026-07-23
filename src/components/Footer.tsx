@@ -37,52 +37,49 @@ const SOCIAL_LINKS = [
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="w-full bg-[#0B1120] text-slate-300 py-8 px-4 sm:px-8 border-t border-slate-800/60">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+    <footer className="w-full">
+      <div className="w-full bg-[#0B1120] text-slate-300 py-8 px-4 sm:px-8 border-t border-slate-800/60">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-1 text-center md:text-left">
+            <h2 className="text-xl font-bold text-white tracking-wider">
+              TJERMIN
+            </h2>
+            <p className="text-xs text-slate-400 font-normal">
+              © 2026 AutoElite. All rights reserved.
+            </p>
+          </div>
 
-        {/* Brand & Copyright */}
-        <div className="space-y-1 text-center md:text-left">
-          <h2 className="text-xl font-bold text-white tracking-wider">
-            TJERMIN
-          </h2>
-          <p className="text-xs text-slate-400 font-normal">
-            © 2026 AutoElite. All rights reserved.
-          </p>
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 text-sm font-medium">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="text-slate-300 hover:text-white transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Social Media Buttons */}
-        <div className="flex items-center gap-3">
-          {SOCIAL_LINKS.map((social) => (
-            <a
-              key={social.name}
-              href={social.href}
-              aria-label={social.name}
-              className="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-slate-700 flex items-center justify-center text-white transition-all hover:scale-105 active:scale-95"
-            >
-              <svg
-                className="w-4 h-4 fill-current"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+          <nav className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 text-sm font-medium">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-slate-300 hover:text-white transition-colors"
               >
-                {social.svgPath}
-              </svg>
-            </a>
-          ))}
-        </div>
+                {link.label}
+              </Link>
+            ))}
+          </nav>
 
+          <div className="flex items-center gap-3">
+            {SOCIAL_LINKS.map((social) => (
+              <a
+                key={social.name}
+                href={social.href}
+                aria-label={social.name}
+                className="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-slate-700 flex items-center justify-center text-white transition-all hover:scale-105 active:scale-95"
+              >
+                <svg
+                  className="w-4 h-4 fill-current"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  {social.svgPath}
+                </svg>
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </footer>
   );

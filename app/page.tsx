@@ -12,6 +12,7 @@ import { MobileCatalogControls } from '@/components/catalog/MobileCatalogControl
 import { DesktopViewMode } from '@/components/catalog/DesktopGridSwitcher';
 import { CatalogHeader } from '@/components/catalog/CatalogHeader';
 import { CatalogGrid } from '@/components/catalog/CatalogGrid';
+import { Newsletter } from '@/components/Newsletter';
 
 export default function CatalogPage() {
   const { data: products, isLoading, isError } = useProducts();
@@ -41,7 +42,7 @@ export default function CatalogPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 pb-12">
+    <div className="min-h-screen bg-white text-slate-900">
       <HeroSection />
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 px-4 xl:px-0">
         <aside className="hidden lg:block w-64 shrink-0 sticky top-20 h-fit">
@@ -84,6 +85,7 @@ export default function CatalogPage() {
           />
         </main>
       </div>
+      <Newsletter />
     </div>
   );
 }
