@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { Product } from '@/types/product';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fakestoreapi.com';
+
 const fetchProducts = async (): Promise<Product[]> => {
-  const res = await fetch('https://fakestoreapi.com/products');
+  const res = await fetch(`${API_BASE_URL}/products`);
   if (!res.ok) throw new Error('Failed to fetch products');
   return res.json();
 };

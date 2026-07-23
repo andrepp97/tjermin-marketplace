@@ -57,6 +57,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, priority = fa
         layout: { type: 'spring', stiffness: 200, damping: 25 },
       }}
       whileHover={{ y: -5 }}
+      whileTap={{ scale: 0.98 }}
       className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-slate-100 flex flex-col justify-between p-4 relative text-slate-900 group cursor-pointer will-change-transform"
     >
       <div>
