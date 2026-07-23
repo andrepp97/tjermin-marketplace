@@ -41,7 +41,7 @@ export default function CatalogPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900 pb-12">
       <HeroSection />
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 px-4 xl:px-0">
         <aside className="hidden lg:block w-64 shrink-0 sticky top-20 h-fit">

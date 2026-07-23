@@ -3,6 +3,7 @@
 import { Product } from '@/types/product';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductSkeleton } from '@/components/ProductSkeleton';
+import { AnimatePresence } from 'framer-motion';
 
 interface CatalogGridProps {
   products: Product[];
@@ -46,19 +47,21 @@ export function CatalogGrid({
   return (
     <>
       <div className={gridLayoutClass}>
-        {isLoading
-          ? Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
-          : products.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              priority={index < 4}
-            />
-          ))}
+        <AnimatePresence mode='popLayout'>
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
+            : products.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                priority={index < 4}
+              />
+            ))}
+        </AnimatePresence>
       </div>
 
       {!isLoading && products.length > 0 && (
-        <div className="my-12 text-center">
+        <div className="mt-12 text-center">
           <button className="px-8 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold transition-all shadow-sm hover:border-slate-300 cursor-pointer">
             Show More Products
           </button>

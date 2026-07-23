@@ -47,9 +47,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, priority = fa
 
   return (
     <motion.div
-      whileHover={{ y: -6 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-100 flex flex-col justify-between p-4 relative text-slate-900 group"
+      layout
+      initial={{ opacity: 0, scale: 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.92 }}
+      transition={{
+        opacity: { duration: 0.2 },
+        scale: { duration: 0.2 },
+        layout: { type: 'spring', stiffness: 200, damping: 25 },
+      }}
+      whileHover={{ y: -5 }}
+      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-slate-100 flex flex-col justify-between p-4 relative text-slate-900 group cursor-pointer will-change-transform"
     >
       <div>
         {/* Badge Indicator */}
