@@ -3,6 +3,7 @@
 Proyek ini merupakan implementasi halaman **Catalog dan Product Listing** modern yang dibangun menggunakan **Next.js App Router**, **React Server Components (RSC)**, **Framer Motion**, dan **Client-side State Management**. Arsitektur ini dirancang modular untuk memberikan performa maksimal, SEO-optimized, animasi yang mulus (60 FPS), serta *User Experience* yang instan dan responsif.
 
 Live Demo (Cloudflare) : https://tjermin-marketplace.andreputerap.workers.dev
+
 Live Demo (Vercel) : https://tjermin-shop.vercel.app (Vercel SSR blocked by FakeStoreAPI)
 
 ---
