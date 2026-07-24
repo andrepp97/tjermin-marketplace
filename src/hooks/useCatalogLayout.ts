@@ -12,6 +12,6 @@ export function useCatalogLayout(
     if (desktopView === 'dense') desktopCols = 'lg:grid-cols-4';
     if (desktopView === 'list') desktopCols = 'lg:grid-cols-1';
 
-    return `grid gap-6 ${mobileCols} ${desktopCols}`;
+    return `grid gap-4 lg:gap-6 ${mobileCols} ${desktopCols}`;
   }, [mobileGridCols, desktopView]);
 }

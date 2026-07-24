@@ -9,8 +9,9 @@ export interface Product {
     rate: number;
     count: number;
   };
-  badge?: 'PROMO' | 'PREMIUM' | 'BEST DEAL';
   quantity: number;
+  badge?: 'PROMO' | 'PREMIUM' | 'BEST DEAL';
+  badges?: string[];
 }
 
 export interface FilterState {

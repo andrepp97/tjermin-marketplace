@@ -7,6 +7,7 @@ import { removeFromCart, updateQuantity } from '@/store/cartSlice';
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useIsClient } from '@/hooks/useIsClient';
+import { formatPriceFromUSD } from '@/utils/formatters';
 
 export default function CartPage() {
   const cartItems = useAppSelector((state) => state.cart.items);
@@ -76,28 +77,35 @@ export default function CartPage() {
                     {item.category}
                   </span>
                   <span className="text-sm font-bold text-slate-900">
-                    ${item.price.toFixed(2)}
+                    {formatPriceFromUSD(item.price)}
                   </span>
                 </div>
 
                 {/* Quantity Controls */}
                 <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl p-1">
                   <button
-                    onClick={() =>
-                      dispatch(
-                        updateQuantity({
-                          id: item.id,
-                          quantity: Math.max(1, item.quantity - 1),
-                        })
-                      )
-                    }
-                    className="p-1 rounded-lg hover:bg-slate-200 text-slate-600 transition-colors"
+                    onClick={() => {
+                      if (item.quantity === 1) {
+                        dispatch(removeFromCart(item.id));
+                      } else {
+                        dispatch(
+                          updateQuantity({
+                            id: item.id,
+                            quantity: item.quantity - 1,
+                          })
+                        );
+                      }
+                    }}
+                    className="p-1 rounded-lg hover:bg-slate-200 text-slate-600 hover:text-red-600 transition-colors cursor-pointer"
+                    title={item.quantity === 1 ? "Remove item" : "Decrease quantity"}
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span className="text-xs font-bold text-slate-900 w-6 text-center">
+
+                  <span className="text-xs font-bold text-slate-900 w-6 text-center select-none">
                     {item.quantity}
                   </span>
+
                   <button
                     onClick={() =>
                       dispatch(
@@ -107,16 +115,15 @@ export default function CartPage() {
                         })
                       )
                     }
-                    className="p-1 rounded-lg hover:bg-slate-200 text-slate-600 transition-colors"
+                    className="p-1 rounded-lg hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                {/* Delete Button */}
                 <button
                   onClick={() => dispatch(removeFromCart(item.id))}
-                  className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                  className="p-2 text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
                   title="Remove item"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -134,7 +141,9 @@ export default function CartPage() {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-slate-500">
                 <span>Subtotal</span>
-                <span className="text-slate-900 font-medium">${totalAmount.toFixed(2)}</span>
+                <span className="text-slate-900 font-medium">
+                  {formatPriceFromUSD(totalAmount)}
+                </span>
               </div>
               <div className="flex justify-between text-slate-500">
                 <span>Shipping</span>
@@ -142,11 +151,11 @@ export default function CartPage() {
               </div>
               <div className="pt-3 border-t border-slate-100 flex justify-between text-base font-bold text-slate-900">
                 <span>Total</span>
-                <span>${totalAmount.toFixed(2)}</span>
+                <span>{formatPriceFromUSD(totalAmount)}</span>
               </div>
             </div>
 
-            <button className="w-full py-3.5 rounded-xl bg-[#0F172A] hover:bg-slate-800 font-bold text-white text-sm transition-all shadow-sm">
+            <button className="w-full py-3.5 rounded-xl bg-[#0F172A] hover:bg-slate-800 font-bold text-white text-sm transition-all shadow-sm cursor-pointer">
               Proceed to Checkout
             </button>
           </div>

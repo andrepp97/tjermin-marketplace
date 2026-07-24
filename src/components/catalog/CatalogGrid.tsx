@@ -54,7 +54,7 @@ export function CatalogGrid({
               <ProductCard
                 key={product.id}
                 product={product}
-                priority={index < 4}
+                priority={index < 6}
               />
             ))}
         </AnimatePresence>

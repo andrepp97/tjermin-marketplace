@@ -20,10 +20,10 @@ const CATEGORIES = [
 
 const PRICE_RANGES = [
   { label: 'All Prices', value: 'all' },
-  { label: '$0 - $50', value: '0-50' },
-  { label: '$50 - $100', value: '50-100' },
-  { label: '$100 - $250', value: '100-250' },
-  { label: '$250+', value: '250-plus' },
+  { label: 'Rp 0 - Rp 750.000', value: '0-50' },
+  { label: 'Rp 750.000 - Rp 1.500.000', value: '50-100' },
+  { label: 'Rp 1.500.000 - Rp 3.750.000', value: '100-250' },
+  { label: 'Rp 3.750.000+', value: '250-plus' },
 ];
 
 export const FilterSidebar: React.FC<FilterSidebarProps> = ({
@@ -33,13 +33,12 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onSelectPriceRange,
 }) => {
   return (
-    <div className="w-full lg:w-64 space-y-8 pr-4">
+    <div className="w-full lg:w-64 space-y-8">
       <div className="flex items-center gap-2 text-xl font-bold text-slate-800">
         <Filter className="w-6 h-6" />
         <span>Filters</span>
       </div>
 
-      {/* Category Section */}
       <div>
         <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900 mb-4">
           CATEGORY
@@ -62,7 +61,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         </ul>
       </div>
 
-      {/* Price Range Section */}
       <div>
         <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900 mb-4">
           PRICE RANGE
