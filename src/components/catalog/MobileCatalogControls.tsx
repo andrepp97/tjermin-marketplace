@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Filter, SlidersHorizontal, Grid, Square, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -45,6 +45,18 @@ export function MobileCatalogControls({
 }: MobileCatalogControlsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Scroll lock when drawer active
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   const handleGridToggle = () => {
     const nextMode = mobileGridCols === 'compact' ? 'standard' : 'compact';
     onGridColsChange(nextMode);
@@ -58,12 +70,11 @@ export function MobileCatalogControls({
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Grid View Toggle with Micro-animation */}
-          <motion.button
-            whileTap={{ scale: 0.92 }}
+          {/* Grid View Toggle */}
+          <button
             type="button"
             onClick={handleGridToggle}
-            className="p-2 border border-slate-200 rounded-xl text-slate-700 bg-white cursor-pointer"
+            className="p-2 border border-slate-200 rounded-xl text-slate-700 bg-white active:scale-95 transition-transform cursor-pointer"
             aria-label="Toggle Grid View"
           >
             {mobileGridCols === 'compact' ? (
@@ -71,21 +82,21 @@ export function MobileCatalogControls({
             ) : (
               <Square className="w-5 h-5" />
             )}
-          </motion.button>
+          </button>
 
           {/* Filter Trigger Button */}
-          <motion.button
-            whileTap={{ scale: 0.95 }}
+          <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 text-white rounded-xl text-sm font-semibold cursor-pointer shadow-sm active:bg-slate-800"
+            className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 text-white rounded-xl text-sm font-semibold active:scale-95 transition-transform cursor-pointer shadow-sm"
           >
             <Filter className="w-4 h-4" />
             <span>Filter</span>
-          </motion.button>
+          </button>
         </div>
       </div>
 
+      {/* Filter Drawer Modal */}
       <AnimatePresence>
         {isOpen && (
           <div className="fixed inset-0 z-50 flex justify-end">
@@ -96,7 +107,7 @@ export function MobileCatalogControls({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-[2px]"
+              className="fixed inset-0 bg-black/40"
             />
 
             {/* Drawer Content */}
@@ -104,8 +115,9 @@ export function MobileCatalogControls({
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-              className="relative z-10 w-full max-w-xs bg-white h-full p-6 overflow-y-auto flex flex-col justify-between shadow-2xl"
+              transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+              style={{ transform: 'translateZ(0)' }}
+              className="relative z-10 w-full max-w-xs bg-white h-full p-6 overflow-y-auto flex flex-col justify-between shadow-xl will-change-transform"
             >
               <div className="space-y-6">
                 {/* Drawer Header */}
@@ -114,15 +126,14 @@ export function MobileCatalogControls({
                     <SlidersHorizontal className="w-5 h-5 text-slate-700" />
                     <span>Filter & Sort</span>
                   </div>
-                  <motion.button
-                    whileTap={{ scale: 0.85 }}
+                  <button
                     type="button"
                     onClick={() => setIsOpen(false)}
                     className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                     aria-label="Close Filter"
                   >
                     <X className="w-5 h-5" />
-                  </motion.button>
+                  </button>
                 </div>
 
                 {/* Sort Options */}
@@ -149,18 +160,17 @@ export function MobileCatalogControls({
                   </h3>
                   <div className="space-y-2">
                     {CATEGORIES.map((cat) => (
-                      <motion.button
+                      <button
                         key={cat.value}
-                        whileTap={{ scale: 0.98 }}
                         type="button"
                         onClick={() => onSelectCategory(cat.value)}
-                        className={`block w-full text-left px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${category === cat.value
-                          ? 'bg-slate-900 text-white font-semibold shadow-sm'
+                        className={`block w-full text-left px-3.5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer ${category === cat.value
+                          ? 'bg-slate-900 text-white font-semibold'
                           : 'text-slate-600 hover:bg-slate-100 font-medium'
                           }`}
                       >
                         {cat.label}
-                      </motion.button>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -172,32 +182,29 @@ export function MobileCatalogControls({
                   </h3>
                   <div className="space-y-2">
                     {PRICE_RANGES.map((range) => (
-                      <motion.button
+                      <button
                         key={range.value}
-                        whileTap={{ scale: 0.98 }}
                         type="button"
                         onClick={() => onSelectPriceRange(range.value)}
-                        className={`block w-full text-left px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${priceRange === range.value
-                          ? 'bg-slate-900 text-white font-semibold shadow-sm'
+                        className={`block w-full text-left px-3.5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer ${priceRange === range.value
+                          ? 'bg-slate-900 text-white font-semibold'
                           : 'text-slate-600 hover:bg-slate-100 font-medium'
                           }`}
                       >
                         {range.label}
-                      </motion.button>
+                      </button>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* Apply Button */}
-              <motion.button
-                whileTap={{ scale: 0.97 }}
+              <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="w-full py-3.5 bg-slate-900 text-white text-sm font-bold rounded-xl mt-6 cursor-pointer hover:bg-slate-800 transition-colors shadow-md"
+                className="w-full py-3.5 bg-slate-900 text-white text-sm font-bold rounded-xl mt-6 cursor-pointer hover:bg-slate-800 active:scale-[0.99] transition-all shadow-md"
               >
                 Apply Filters
-              </motion.button>
+              </button>
             </motion.div>
           </div>
         )}
